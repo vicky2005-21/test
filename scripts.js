@@ -23,14 +23,19 @@ const addMoneyPopup = document.getElementById('add-money-popup');
 const showAddMoneyPopupButton = document.getElementById('show-add-money-popup');
 const proceedPaymentButton = document.getElementById('confirm-payment-button');
 const additionalAmountInput = document.getElementById('extra-amount');
+const thankYouPopup = document.getElementById('thank-you-popup');
 
 const paymentApps = [
     { name: 'PhonePe', scheme: 'phonepe://' },
     { name: 'Paytm', scheme: 'paytm://' },
-    { name: 'Google Pay', scheme: 'tez://' }
+    { name: 'Google Pay', scheme: 'tez://' },
+    { name: 'BHIM', scheme: 'bhim://' },
+    { name: 'Amazon Pay', scheme: 'amazonpay://' }
 ];
 
-const upiId = '9347317236@ybl';  // Replace with your actual UPI ID
+
+const upiId = '8074056499@ybl';  // Replace with your actual UPI ID
+const googleSheetsScriptURL = 'https://script.google.com/macros/s/AKfycbzRSH4afDruBd7Na5MvpZzTm_JuPcerzJTsqy6d_ZDRdzygsRxMm9QFGOwodfOpYezT/exec';
 
 
 
@@ -245,6 +250,7 @@ function closePopup() {
     selectionPopup.style.display = 'none';
     addMoneyPopup.style.display = 'none';
     paymentPopup.style.display = 'none';
+    thankYouPopup.style.display = 'none';
 }
 
 // Function to close popups if clicked outside
@@ -274,7 +280,6 @@ function showPaymentOptions(finalTotal) {
     paymentPopup.style.display = 'flex';  // Show payment popup
 }
 
-
 // Function to detect installed payment apps
 function detectPaymentApps(finalTotal) {
     paymentOptionsContainer.innerHTML = ''; // Clear any existing options
@@ -282,19 +287,62 @@ function detectPaymentApps(finalTotal) {
         const button = document.createElement('button');
         button.innerText = `Pay ₹${finalTotal} with ${app.name}`;
         button.onclick = () => {
-            const upiURL = generateUPIUrl(upiId, finalTotal);
-            window.location.href = `${app.scheme}upi://pay?pa=${upiId}&pn=Happy Juice Corner&am=${finalTotal}&cu=INR&url=${encodeURIComponent(upiURL)}`;
+            handlePayment(app, finalTotal);
         };
         paymentOptionsContainer.appendChild(button);
     });
 }
 
+// Example of using this function after a payment is processed
+function handlePayment(app, finalTotal) {
+    const upiURL = generateUPIUrl(upiId, finalTotal);
+    window.location.href = `${app.scheme}upi://pay?pa=${upiId}&pn=Happy Juice Corner&am=${finalTotal}&cu=INR&url=${encodeURIComponent(upiURL)}`;
 
-function updateFinalTotal() {
-    const additionalAmount = parseFloat(document.getElementById('extra-amount').value) || 0;
-    const finalTotal = totalPrice + additionalAmount;
+    // Simulate payment verification
+    verifyPayment((success) => {
+        if (success) {
+            storeTransactionData(app.name, finalTotal); // Save transaction data if payment is successful
+            showThankYouPopup(); // Show Thank You popup if payment is successful
+        } else {
+            alert("Payment failed or was canceled. Please try again.");
+            showAddMoneyPopup(); // Return to Order Summary if payment fails
+        }
+    });
+}
+
+// Simulate payment verification
+function verifyPayment(callback) {
+    // Simulated delay for "processing"
+    setTimeout(() => {
+        const paymentSuccess = confirm("Was the payment successful? Click 'OK' for Yes or 'Cancel' for No.");
+        callback(paymentSuccess);
+    }, 3000); // 3-second delay simulating processing time
+}
+
+// Function to store transaction data in Google Sheets
+function storeTransactionData(paymentMethod, finalTotal) {
+    const transactionData = {
+        amount: finalTotal,
+        paymentApp: paymentMethod,
+        items: JSON.stringify(selectedItems)
+    };
     
-    document.getElementById('confirm-payment-button').textContent = `Pay ₹${finalTotal}`;
+    fetch(googleSheetsScriptURL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(transactionData)
+    })
+    .then(response => response.json())
+    .then(data => console.log('Transaction data saved:', data))
+    .catch(error => console.error('Error saving transaction data:', error));
+}
+
+// Function to show Thank You popup
+function showThankYouPopup() {
+    paymentPopup.style.display = 'none';
+    thankYouPopup.style.display = 'flex';
 }
 
 // Function to update payment buttons with the latest total
@@ -319,11 +367,6 @@ function updateOrderSummaryPopup() {
     totalPricePopup.textContent = `Total: ₹${totalPrice}`;
 }
 
-// Function to close the payment popup
-function closePaymentPopup() {
-    paymentPopup.style.display = 'none';
-}
-
 // Load the menu on page load
 document.addEventListener('DOMContentLoaded', () => {
     loadMenu();
@@ -339,5 +382,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Attach event listener to the "Proceed to Payment" button in the Add Money Popup
     proceedPaymentButton.addEventListener('click', proceedToPayment);
 });
+
 
 
