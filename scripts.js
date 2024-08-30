@@ -26,7 +26,7 @@ const paymentApps = [
     { name: 'Google Pay', scheme: 'tez://' }
 ];
 
-const upiId = 'your-upi-id@bank';  // Replace with your actual UPI ID
+const upiId = '9347317236@ybl';  // Replace with your actual UPI ID
 
 const menuData = {
     milkShakes: [
