@@ -176,18 +176,129 @@ body {
     color: #bbbbbb;
 }
 
-/* Popup Styles */
+/* Popup Background */
 .popup {
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black background */
+    display: none; /* Hidden by default */
     justify-content: center;
     align-items: center;
-    z-index: 10000;
+    z-index: 1000; /* Ensure it's on top */
+}
+
+/* Popup Content */
+.popup-inner-content {
+    background-color: #212121; /* Dark theme background */
+    border-radius: 10px;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    text-align: left;
+    position: relative;
+    color: #ffffff; /* White text for dark theme */
+}
+
+/* Popup Header */
+.popup-inner-content h3 {
+    margin-bottom: 20px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 24px;
+    color: #ffffff;
+    text-align: center;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+}
+
+/* Order Items List */
+.order-items-list {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.order-items-list li {
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-between; /* Align items and prices */
+    border-bottom: 1px solid #444;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    color: #ffffff;
+}
+
+/* Total Amount Before Additional Amount */
+.order-total {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffffff;
+    margin: 20px 0;
+    text-align: right; /* Align total amount to the right */
+}
+
+/* Extra Amount Section */
+.extra-amount-section {
+    margin-bottom: 20px;
+}
+
+.extra-amount-section label {
+    display: block;
+    font-size: 16px;
+    color: #cccccc;
+    margin-bottom: 5px;
+}
+
+.extra-amount-section input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #555;
+    border-radius: 5px;
+    box-sizing: border-box;
+    background-color: #333; /* Darker background for input */
+    color: #ffffff; /* White text */
+}
+
+/* Final Total After Adding Extra Amount */
+.final-total {
+    font-size: 20px;
+    font-weight: bold;
+    color: #00c853;
+    margin: 20px 0;
+    text-align: right; /* Align final total to the right */
+}
+
+/* Proceed to Payment Button */
+.proceed-button {
+    background-color: #00c853; /* Green button color */
+    color: #ffffff;
+    font-size: 18px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    text-align: center;
+}
+
+.proceed-button:hover {
+    background-color: #009624;
+}
+
+/* Additional Styles */
+.popup-inner-content button:focus,
+.popup-inner-content input:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.popup-inner-content input::placeholder {
+    color: #bbbbbb; /* Light grey placeholder text */
 }
 
 .popup-content {
@@ -348,102 +459,26 @@ button:active {
 #additional-amount::placeholder {
     color: #888888;
 }
-/* General Popup Styling */
-.popup {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8); /* Dark overlay */
-    justify-content: center;
-    align-items: center;
-    z-index: 10000;
-}
 
-/* Inner Content of the Popup */
-.popup-inner-content {
-    background-color: #1e1e1e;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    max-width: 400px;
-    width: 90%;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
 
-/* Order Details Title */
-.popup-inner-content h3 {
-    color: #ffffff;
-    margin-bottom: 20px;
-}
 
-/* Order Items List */
-#order-items-list {
-    list-style-type: none;
-    padding: 0;
-    margin-bottom: 15px;
-    text-align: left;
-    color: #cccccc;
-    font-size: 16px;
-}
-
-/* Total Price Styling */
-#order-total-amount {
-    color: #00ff00;
-    font-weight: bold;
-    font-size: 18px;
-    margin-bottom: 20px;
-}
-
-/* Extra Amount Section */
-.extra-amount-section {
-    margin-bottom: 20px;
-}
-
-.extra-amount-section label {
-    color: #bbbbbb;
-    display: block;
-    margin-bottom: 5px;
-    font-size: 14px;
-}
-
-.extra-amount-section input[type="number"] {
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #333333;
-    background-color: #2a2a2a;
-    color: #ffffff;
-    font-size: 16px;
-}
-
-/* Proceed to Payment Button */
-#confirm-payment-button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #00cc00;
-    color: #000;
-    font-size: 18px;
-    font-weight: bold;
+#payment-options-list button {
+    background-color: #007bff;
+    color: white;
     border: none;
-    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    width: 100%;
+    font-size: 16px;
 }
 
-#confirm-payment-button:hover {
-    background-color: #00e600;
+#payment-options-list button:hover {
+    background-color: #0056b3;
 }
 
-/* Close Popup on Outside Click */
-.popup {
-    cursor: pointer;
+#qr-code {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
 }
-
-.popup-inner-content {
-    cursor: auto; /* Prevents closing when clicking inside the popup content */
-}
-
