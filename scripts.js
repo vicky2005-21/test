@@ -19,6 +19,10 @@ const halfQuantityDisplay = document.getElementById('half-quantity');
 const totalPriceElement = document.getElementById('total-price');
 const paymentOptionsContainer = document.getElementById('payment-options');
 const paymentPopup = document.getElementById('payment-popup');
+const addMoneyPopup = document.getElementById('add-money-popup');
+const showAddMoneyPopupButton = document.getElementById('show-add-money-popup');
+const proceedPaymentButton = document.getElementById('proceed-payment-button');
+const additionalAmountInput = document.getElementById('additional-amount');
 
 const paymentApps = [
     { name: 'PhonePe', scheme: 'phonepe://' },
@@ -26,7 +30,7 @@ const paymentApps = [
     { name: 'Google Pay', scheme: 'tez://' }
 ];
 
-const upiId = '9347317236@ybl';  // Replace with your actual UPI ID
+const upiId = 'your-upi-id@bank';  // Replace with your actual UPI ID
 
 const menuData = {
     milkShakes: [
@@ -86,6 +90,7 @@ const menuData = {
 
 let selectedItems = {};
 
+// Function to load the menu items
 function loadMenu() {
     loadMenuItems(menuData.milkShakes, menuSection);
     loadMenuItems(menuData.juices, juicesSection);
@@ -94,6 +99,7 @@ function loadMenu() {
     loadMenuItems(menuData.beverages, beveragesSection);
 }
 
+// Function to load individual menu items
 function loadMenuItems(items, section) {
     items.forEach(item => {
         const menuItem = document.createElement('div');
@@ -109,6 +115,7 @@ function loadMenuItems(items, section) {
     });
 }
 
+// Function to handle item selection
 function handleItemClick(itemName, fullPrice, halfPrice) {
     currentItem = { name: itemName, fullPrice: fullPrice, halfPrice: halfPrice };
     popupItemName.textContent = itemName;
@@ -130,6 +137,7 @@ function handleItemClick(itemName, fullPrice, halfPrice) {
     selectionPopup.style.display = 'flex';
 }
 
+// Function to change item quantity
 function changeQuantity(size, change) {
     if (size === 'full') {
         fullQuantity = Math.max(0, fullQuantity + change);
@@ -142,6 +150,7 @@ function changeQuantity(size, change) {
     updateOrder();
 }
 
+// Function to update the order
 function updateOrder() {
     selectedItems[currentItem.name] = {
         full: fullQuantity,
@@ -167,6 +176,7 @@ function updateOrder() {
     calculateTotal();
 }
 
+// Function to calculate the total price
 function calculateTotal() {
     totalPrice = 0;
     orderList.innerHTML = '';  // Clear the current list
@@ -208,7 +218,7 @@ function calculateTotal() {
     }
 
     totalPriceElement.textContent = `Total: ₹${totalPrice}`;
-    navbarTotal.textContent = totalPrice;
+    navbarTotal.textContent = `₹${totalPrice}`;
     footerTotal.textContent = `₹${totalPrice}`;
 
     // Show order summary when the first item is added
@@ -219,27 +229,41 @@ function calculateTotal() {
     }
 }
 
+// Function to close the selection popup
 function closePopup() {
     selectionPopup.style.display = 'none';
 }
 
+// Function to close popups if clicked outside
 function closePopupOutside(event) {
-    if (event.target === selectionPopup || event.target === paymentPopup) {
+    if (event.target.classList.contains('popup')) {
         closePopup();
+        closePaymentPopup();
+        addMoneyPopup.style.display = 'none';
     }
 }
 
-// Function to handle "Pay" button click
+// Function to show the Add Money or Payment Method Popup
 function showAddMoneyPopup() {
-    // Optionally show an "Add Money" popup or proceed directly to payment options
-    showPaymentOptions(); // Directly show payment options
+    updateOrderSummaryPopup();  // Update the order summary in the popup
+    addMoneyPopup.style.display = 'flex';
 }
 
+// Function to proceed to payment options
+function proceedToPayment() {
+    const additionalAmount = parseFloat(additionalAmountInput.value) || 0;
+    totalPrice += additionalAmount;
+    addMoneyPopup.style.display = 'none';
+    showPaymentOptions();
+}
+
+// Function to show payment options
 function showPaymentOptions() {
     detectPaymentApps();
     paymentPopup.style.display = 'flex';  // Show payment popup
 }
 
+// Function to detect installed payment apps
 function detectPaymentApps() {
     paymentOptionsContainer.innerHTML = ''; // Clear any existing options
     paymentApps.forEach(app => {
@@ -259,6 +283,7 @@ function detectPaymentApps() {
     });
 }
 
+// Function to add payment option buttons
 function addPaymentOption(name, scheme) {
     const button = document.createElement('button');
     button.innerText = `Pay with ${name}`;
@@ -270,10 +295,20 @@ function addPaymentOption(name, scheme) {
     paymentOptionsContainer.appendChild(button);
 }
 
+// Function to generate UPI URL
 function generateUPIUrl(upiId, amount) {
     return `upi://pay?pa=${upiId}&pn=Happy Juice Corner&am=${amount}&cu=INR`;
 }
 
+// Function to update the order summary in the popup
+function updateOrderSummaryPopup() {
+    const orderSummaryList = document.getElementById('order-summary-list');
+    const totalPricePopup = document.getElementById('total-price-popup');
+    orderSummaryList.innerHTML = orderList.innerHTML;
+    totalPricePopup.textContent = `Total: ₹${totalPrice}`;
+}
+
+// Function to close the payment popup
 function closePaymentPopup() {
     paymentPopup.style.display = 'none';
 }
@@ -281,10 +316,15 @@ function closePaymentPopup() {
 // Load the menu on page load
 document.addEventListener('DOMContentLoaded', () => {
     loadMenu();
+
+    // Ensure the order summary is visible if there are items in the order
     if (totalPrice > 0) {
         orderSummary.classList.remove('order-summary-hidden');
     }
 
-    // Attach event listener to the "Pay" button
-    document.getElementById('pay-now-button').addEventListener('click', showAddMoneyPopup);
+    // Attach event listener to the "Proceed to Payment" button
+    showAddMoneyPopupButton.addEventListener('click', showAddMoneyPopup);
+
+    // Attach event listener to the "Proceed to Payment" button in the Add Money Popup
+    proceedPaymentButton.addEventListener('click', proceedToPayment);
 });
