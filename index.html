@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Juice Corner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Sticky Total Navbar -->
+    <nav class="navbar sticky-top" onclick="scrollToSummary()">
+        <div class="navbar-content">
+            <span class="total-label">TOTAL:</span>
+            <span id="navbar-total" class="total-price-bold">₹0</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <img src="logo.jpeg" alt="Background Image" class="header-img">
+            <div class="header-info">
+                <div class="title">
+                    <h1>Happy Juice Corner</h1>
+                    <p class="details hours">⏰ 09:00 AM to 7:30 PM</p>
+                </div>
+                <div class="details">
+                    <p><span class="icon">📍</span> SD</p>
+                    <p><span class="icon">📞</span> <a href="tel:8658011445" class="phone-link">8658011445</a></p>
+                    <p><span class="icon">📞</span> <a href="tel:7008047535" class="phone-link">7008047535</a></p>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- Menu Section -->
+        <div class="menu-section" id="menu-section">
+            <h2>MILK SHAKES</h2>
+            <!-- Menu Items will be dynamically loaded here by JavaScript -->
+        </div>
+
+        <div class="menu-section" id="juices-section">
+            <h2>JUICES</h2>
+            <!-- Menu Items will be dynamically loaded here by JavaScript -->
+        </div>
+
+        <div class="menu-section" id="maggi-section">
+            <h2>MAGGI</h2>
+            <!-- Menu Items will be dynamically loaded here by JavaScript -->
+        </div>
+
+        <div class="menu-section" id="eggs-section">
+            <h2>EGG DISHES</h2>
+            <!-- Menu Items will be dynamically loaded here by JavaScript -->
+        </div>
+
+        <div class="menu-section" id="beverages-section">
+            <h2>BEVERAGES</h2>
+            <!-- Menu Items will be dynamically loaded here by JavaScript -->
+        </div>
+
+        <hr>
+
+        <!-- Order Summary Section -->
+        <div id="order-summary" class="order-summary-hidden">
+            <h2>Order Summary</h2>
+            <ul id="order-list"></ul>
+            <p id="total-price" class="total-price">Total: ₹0</p>
+            <button id="pay-now-button">Pay</button>
+        </div>
+    </div>
+
+    <!-- Sticky Footer with TOTAL AMOUNT -->
+    <footer class="sticky-footer" onclick="scrollToSummary()">
+        <div class="footer-content">
+            <span>TOTAL</span>
+            <span id="footer-total">₹0</span>
+        </div>
+    </footer>
+
+    <!-- Selection Popup -->
+    <div id="selection-popup" class="popup" onclick="closePopupOutside(event)">
+        <div class="popup-content">
+            <h3 id="popup-item-name"></h3>
+
+            <!-- Full Option with Quantity Selector -->
+            <div class="popup-option-group">
+                <span>Full - ₹<span id="popup-full-price"></span></span>
+                <div class="quantity-selector">
+                    <button class="change-quantity" onclick="changeQuantity('full', -1)">-</button>
+                    <span id="full-quantity">0</span>
+                    <button class="change-quantity" onclick="changeQuantity('full', 1)">+</button>
+                </div>
+            </div>
+
+            <!-- Half Option with Quantity Selector -->
+            <div id="half-option" class="popup-option-group">
+                <span>Half - ₹<span id="popup-half-price"></span></span>
+                <div class="quantity-selector">
+                    <button class="change-quantity" onclick="changeQuantity('half', -1)">-</button>
+                    <span id="half-quantity">0</span>
+                    <button class="change-quantity" onclick="changeQuantity('half', 1)">+</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Money or Payment Method Popup -->
+    <div id="add-money-popup" class="popup" onclick="closePopupOutside(event)">
+        <div class="popup-content">
+            <h3>Select Option</h3>
+            <button id="add-money-button" onclick="addExtraItems()">Add Extra Items</button>
+            <button id="select-payment-method-button" onclick="showPaymentOptions()">Proceed to Payment</button>
+        </div>
+    </div>
+
+    <!-- Payment Options Popup -->
+    <div id="payment-popup" class="popup" onclick="closePopupOutside(event)">
+        <div class="popup-content">
+            <h3>Select Payment Method</h3>
+            <div id="payment-options"></div>
+            <button onclick="closePaymentPopup()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Attribution Footer -->
+    <footer class="attribution">
+        <p>Made with ❤️ by <a href="https://tr-portfolio-tan.vercel.app/" target="_blank">Vignesh</a></p>
+    </footer>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
