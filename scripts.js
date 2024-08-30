@@ -236,10 +236,8 @@ function closePopup() {
 
 // Function to close popups if clicked outside
 function closePopupOutside(event) {
-    if (event.target.classList.contains('popup')) {
+    if (event.target === selectionPopup || event.target === paymentPopup || event.target === addMoneyPopup) {
         closePopup();
-        closePaymentPopup();
-        addMoneyPopup.style.display = 'none';
     }
 }
 
@@ -251,7 +249,7 @@ function showAddMoneyPopup() {
 
 // Function to proceed to payment options
 function proceedToPayment() {
-    const additionalAmount = parseFloat(additionalAmountInput.value) || 0;
+    const additionalAmount = parseFloat(document.getElementById('extra-amount').value) || 0;
     totalPrice += additionalAmount;
     addMoneyPopup.style.display = 'none';
     showPaymentOptions();
@@ -267,32 +265,15 @@ function showPaymentOptions() {
 function detectPaymentApps() {
     paymentOptionsContainer.innerHTML = ''; // Clear any existing options
     paymentApps.forEach(app => {
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.src = app.scheme;
-
-        iframe.onload = () => {
-            addPaymentOption(app.name, app.scheme);
+        const button = document.createElement('button');
+        button.innerText = `Pay with ${app.name}`;
+        button.onclick = () => {
+            const amount = totalPrice;  // Use the already calculated totalPrice
+            const upiURL = generateUPIUrl(upiId, amount);
+            window.location.href = `${app.scheme}upi://pay?pa=${upiId}&pn=Happy Juice Corner&am=${amount}&cu=INR&url=${encodeURIComponent(upiURL)}`;
         };
-
-        iframe.onerror = () => {
-            // The app is not installed, do nothing
-        };
-
-        document.body.appendChild(iframe);
+        paymentOptionsContainer.appendChild(button);
     });
-}
-
-// Function to add payment option buttons
-function addPaymentOption(name, scheme) {
-    const button = document.createElement('button');
-    button.innerText = `Pay with ${name}`;
-    button.onclick = () => {
-        const amount = totalPrice;  // Use the already calculated totalPrice
-        const upiURL = generateUPIUrl(upiId, amount);
-        window.location.href = `${scheme}upi://pay?pa=${upiId}&pn=Happy Juice Corner&am=${amount}&cu=INR&url=${encodeURIComponent(upiURL)}`;
-    };
-    paymentOptionsContainer.appendChild(button);
 }
 
 // Function to generate UPI URL
@@ -302,8 +283,8 @@ function generateUPIUrl(upiId, amount) {
 
 // Function to update the order summary in the popup
 function updateOrderSummaryPopup() {
-    const orderSummaryList = document.getElementById('order-summary-list');
-    const totalPricePopup = document.getElementById('total-price-popup');
+    const orderSummaryList = document.getElementById('order-items-list');
+    const totalPricePopup = document.getElementById('order-total-amount');
     orderSummaryList.innerHTML = orderList.innerHTML;
     totalPricePopup.textContent = `Total: ₹${totalPrice}`;
 }
@@ -323,8 +304,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Attach event listener to the "Proceed to Payment" button
-    showAddMoneyPopupButton.addEventListener('click', showAddMoneyPopup);
-
-    // Attach event listener to the "Proceed to Payment" button in the Add Money Popup
-    proceedPaymentButton.addEventListener('click', proceedToPayment);
+    document.getElementById('confirm-payment-button').addEventListener('click', proceedToPayment);
 });
+
