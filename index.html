@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy Juice Corner</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -68,7 +69,7 @@
             <h2>Order Summary</h2>
             <ul id="order-list"></ul>
             <p id="total-price" class="total-price">Total: ₹0</p>
-            <button id="proceed-payment-button">Proceed to Payment</button>
+            <button id="show-add-money-popup">Proceed to Payment</button>
         </div>
     </div>
 
@@ -80,30 +81,65 @@
         </div>
     </footer>
 
-    <!-- Add Money or Payment Method Popup -->
-    <div id="add-money-popup" class="popup" onclick="closePopupOutside(event)">
+    <!-- Selection Popup -->
+    <div id="selection-popup" class="popup" onclick="closePopupOutside(event)">
         <div class="popup-content">
-            <h3>Order Summary</h3>
-            <ul id="order-summary-list"></ul>
-            <p id="total-price-popup">Total: ₹0</p>
-            
-            <div class="add-money-section">
-                <label for="additional-amount">Add Amount (Optional):</label>
-                <input type="number" id="additional-amount" placeholder="Enter additional amount">
+            <h3 id="popup-item-name"></h3>
+
+            <!-- Full Option with Quantity Selector -->
+            <div class="popup-option-group">
+                <span>Full - ₹<span id="popup-full-price"></span></span>
+                <div class="quantity-selector">
+                    <button class="change-quantity" onclick="changeQuantity('full', -1)">-</button>
+                    <span id="full-quantity">0</span>
+                    <button class="change-quantity" onclick="changeQuantity('full', 1)">+</button>
+                </div>
             </div>
 
-            <button id="proceed-to-payment-button">Proceed to Payment</button>
+            <!-- Half Option with Quantity Selector -->
+            <div id="half-option" class="popup-option-group">
+                <span>Half - ₹<span id="popup-half-price"></span></span>
+                <div class="quantity-selector">
+                    <button class="change-quantity" onclick="changeQuantity('half', -1)">-</button>
+                    <span id="half-quantity">0</span>
+                    <button class="change-quantity" onclick="changeQuantity('half', 1)">+</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Payment Options Popup -->
-    <div id="payment-popup" class="popup" onclick="closePopupOutside(event)">
-        <div class="popup-content">
-            <h3>Select Payment Method</h3>
-            <div id="payment-options"></div>
-            <button id="cancel-payment-button">Cancel</button>
+    <div id="add-money-popup" class="popup" onclick="closePopupOutside(event)">
+        <div class="popup-inner-content">
+            <h3>Order Summary</h3>
+            <ul id="order-items-list" class="order-items-list"></ul>
+            
+            <!-- Display Total Before Additional Amount -->
+            <p id="order-total-amount" class="order-total">Total: ₹0</p>
+            
+            <!-- Section to Add Additional Amount -->
+            <div class="extra-amount-section">
+                <label for="extra-amount">Add Amount (Optional):</label>
+                <input type="number" id="extra-amount" placeholder="Enter additional amount" oninput="updateFinalTotal()">
+            </div>
+    
+            <!-- New Total After Adding Extra Amount -->
+            <p id="final-total-amount" class="final-total"></p>
+        
+            <!-- Proceed to Payment Button with Updated Total -->
+            <button id="confirm-payment-button" class="proceed-button">Pay ₹0</button>
         </div>
     </div>
+    
+    <!-- Payment Options Popup -->
+    <!-- Payment Options Popup -->
+    <div id="payment-options-popup" class="popup" onclick="closePopupOutside(event)">
+        <div class="popup-inner-content">
+            <h3>Select Payment Method</h3>
+            <div id="payment-options-list"></div>
+            <button onclick="closePaymentPopup()">Cancel</button>
+        </div>
+    </div>
+
 
     <!-- Attribution Footer -->
     <footer class="attribution">
