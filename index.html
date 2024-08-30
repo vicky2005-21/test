@@ -108,25 +108,25 @@
     </div>
 
     <div id="add-money-popup" class="popup" onclick="closePopupOutside(event)">
-        <div class="popup-content">
+        <div class="popup-inner-content">
             <h3>Order Summary</h3>
-            <ul id="order-summary-list"></ul>
-            <p id="total-price-popup">Total: ₹0</p>
+            <ul id="order-items-list"></ul>
+            <p id="order-total-amount">Total: ₹0</p>
             
-            <div class="add-money-section">
-                <label for="additional-amount">Add Amount (Optional):</label>
-                <input type="number" id="additional-amount" placeholder="Enter additional amount">
+            <div class="extra-amount-section">
+                <label for="extra-amount">Add Amount (Optional):</label>
+                <input type="number" id="extra-amount" placeholder="Enter additional amount">
             </div>
     
-            <button id="proceed-payment-button">Proceed to Payment</button>
+            <button id="confirm-payment-button">Proceed to Payment</button>
         </div>
     </div>
-
+    
     <!-- Payment Options Popup -->
-    <div id="payment-popup" class="popup" onclick="closePopupOutside(event)">
-        <div class="popup-content">
+    <div id="payment-options-popup" class="popup" onclick="closePopupOutside(event)">
+        <div class="popup-inner-content">
             <h3>Select Payment Method</h3>
-            <div id="payment-options"></div>
+            <div id="payment-options-list"></div>
             <button onclick="closePaymentPopup()">Cancel</button>
         </div>
     </div>
