@@ -482,3 +482,41 @@ button:active {
     display: flex;
     justify-content: center;
 }
+
+.popup-inner-content {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.thank-you-logo {
+    width: 50px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.thank-you-footer {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #ccc;
+}
+
+.popup button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.popup button:hover {
+    background-color: #45a049;
+}
+
+
+
+
