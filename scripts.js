@@ -17,12 +17,12 @@ const popupItemName = document.getElementById('popup-item-name');
 const fullQuantityDisplay = document.getElementById('full-quantity');
 const halfQuantityDisplay = document.getElementById('half-quantity');
 const totalPriceElement = document.getElementById('total-price');
-const paymentOptionsContainer = document.getElementById('payment-options');
-const paymentPopup = document.getElementById('payment-popup');
+const paymentOptionsContainer = document.getElementById('payment-options-list');
+const paymentPopup = document.getElementById('payment-options-popup');
 const addMoneyPopup = document.getElementById('add-money-popup');
 const showAddMoneyPopupButton = document.getElementById('show-add-money-popup');
-const proceedPaymentButton = document.getElementById('proceed-payment-button');
-const additionalAmountInput = document.getElementById('additional-amount');
+const proceedPaymentButton = document.getElementById('confirm-payment-button');
+const additionalAmountInput = document.getElementById('extra-amount');
 
 const paymentApps = [
     { name: 'PhonePe', scheme: 'phonepe://' },
@@ -30,7 +30,9 @@ const paymentApps = [
     { name: 'Google Pay', scheme: 'tez://' }
 ];
 
-const upiId = 'your-upi-id@bank';  // Replace with your actual UPI ID
+const upiId = '9347317236@ybl';  // Replace with your actual UPI ID
+
+
 
 const menuData = {
     milkShakes: [
@@ -217,9 +219,18 @@ function calculateTotal() {
         orderList.appendChild(listItem);
     }
 
+    // Update total in various UI elements
     totalPriceElement.textContent = `Total: ₹${totalPrice}`;
     navbarTotal.textContent = `₹${totalPrice}`;
     footerTotal.textContent = `₹${totalPrice}`;
+
+    // Update the "Proceed to Payment" button label
+    proceedPaymentButton.textContent = `Pay ₹${totalPrice}`;
+    
+    // Similarly, update the payment app buttons if the payment popup is open
+    if (paymentPopup.style.display === 'flex') {
+        updatePaymentButtons();
+    }
 
     // Show order summary when the first item is added
     if (totalPrice > 0) {
@@ -232,11 +243,13 @@ function calculateTotal() {
 // Function to close the selection popup
 function closePopup() {
     selectionPopup.style.display = 'none';
+    addMoneyPopup.style.display = 'none';
+    paymentPopup.style.display = 'none';
 }
 
 // Function to close popups if clicked outside
 function closePopupOutside(event) {
-    if (event.target === selectionPopup || event.target === paymentPopup || event.target === addMoneyPopup) {
+    if (event.target.classList.contains('popup')) {
         closePopup();
     }
 }
@@ -250,29 +263,46 @@ function showAddMoneyPopup() {
 // Function to proceed to payment options
 function proceedToPayment() {
     const additionalAmount = parseFloat(document.getElementById('extra-amount').value) || 0;
-    totalPrice += additionalAmount;
+    const finalTotal = totalPrice + additionalAmount;
     addMoneyPopup.style.display = 'none';
-    showPaymentOptions();
+    showPaymentOptions(finalTotal); // Pass the new total to the payment options function
 }
 
 // Function to show payment options
-function showPaymentOptions() {
-    detectPaymentApps();
+function showPaymentOptions(finalTotal) {
+    detectPaymentApps(finalTotal);
     paymentPopup.style.display = 'flex';  // Show payment popup
 }
 
+
 // Function to detect installed payment apps
-function detectPaymentApps() {
+function detectPaymentApps(finalTotal) {
     paymentOptionsContainer.innerHTML = ''; // Clear any existing options
     paymentApps.forEach(app => {
         const button = document.createElement('button');
-        button.innerText = `Pay with ${app.name}`;
+        button.innerText = `Pay ₹${finalTotal} with ${app.name}`;
         button.onclick = () => {
-            const amount = totalPrice;  // Use the already calculated totalPrice
-            const upiURL = generateUPIUrl(upiId, amount);
-            window.location.href = `${app.scheme}upi://pay?pa=${upiId}&pn=Happy Juice Corner&am=${amount}&cu=INR&url=${encodeURIComponent(upiURL)}`;
+            const upiURL = generateUPIUrl(upiId, finalTotal);
+            window.location.href = `${app.scheme}upi://pay?pa=${upiId}&pn=Happy Juice Corner&am=${finalTotal}&cu=INR&url=${encodeURIComponent(upiURL)}`;
         };
         paymentOptionsContainer.appendChild(button);
+    });
+}
+
+
+function updateFinalTotal() {
+    const additionalAmount = parseFloat(document.getElementById('extra-amount').value) || 0;
+    const finalTotal = totalPrice + additionalAmount;
+    
+    document.getElementById('confirm-payment-button').textContent = `Pay ₹${finalTotal}`;
+}
+
+// Function to update payment buttons with the latest total
+function updatePaymentButtons() {
+    const buttons = paymentOptionsContainer.getElementsByTagName('button');
+    Array.from(buttons).forEach(button => {
+        const appName = button.innerText.split(' with ')[1];
+        button.innerText = `Pay ₹${totalPrice} with ${appName}`;
     });
 }
 
@@ -304,6 +334,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Attach event listener to the "Proceed to Payment" button
-    document.getElementById('confirm-payment-button').addEventListener('click', proceedToPayment);
+    showAddMoneyPopupButton.addEventListener('click', showAddMoneyPopup);
+
+    // Attach event listener to the "Proceed to Payment" button in the Add Money Popup
+    proceedPaymentButton.addEventListener('click', proceedToPayment);
 });
+
 
