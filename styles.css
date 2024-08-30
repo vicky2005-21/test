@@ -74,6 +74,7 @@ body {
 .header-info h1 {
     font-size: 30px;
     margin: 0;
+    color: #ffffff;
     background: linear-gradient(45deg, #ff0000, #ffff00, #00ff00);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -98,11 +99,6 @@ body {
     font-size: 18px;
     color: #ffcc00;
     margin-top: 5px;
-}
-
-.header-info .details .icon {
-    margin-right: 5px;
-    vertical-align: middle;
 }
 
 .phone-link {
@@ -138,11 +134,6 @@ body {
     padding: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.menu-item.selected {
-    background-color: #004d00;
-    color: #ffffff;
 }
 
 .menu-item:hover {
@@ -259,45 +250,13 @@ body {
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     color: #ffcc00;
-    margin-top: 20px;
-}
-
-#order-summary h2 {
-    font-size: 20px;
-    margin-bottom: 10px;
-}
-
-#order-summary ul {
-    list-style-type: none;
-    padding-left: 0;
-    margin-bottom: 10px;
 }
 
 #total-price {
     font-weight: bold;
     font-size: 18px;
-    color: #00ff00;
-    margin-bottom: 10px;
-}
-
-#pay-now-button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #ffcc00;
-    color: #000;
-    font-size: 18px;
-    font-weight: bold;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    text-align: center;
     margin-top: 10px;
-    transition: background-color 0.3s ease;
-}
-
-#pay-now-button:hover {
-    background-color: #ffd633;
+    color: #00ff00;
 }
 
 /* Sticky Footer */
@@ -340,3 +299,151 @@ body {
 .attribution a:hover {
     color: #ffffff;
 }
+
+/* Custom Button Styles */
+button {
+    background-color: #ffcc00;
+    color: #000;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #ffd633;
+}
+
+button:active {
+    background-color: #e6b800;
+}
+
+/* Specific Button Styles for Add Money Popup */
+#proceed-payment-button {
+    background-color: #00ff00;
+    color: #000;
+}
+
+#proceed-payment-button:hover {
+    background-color: #33ff33;
+}
+
+/* Input Styles for Additional Amount */
+#additional-amount {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #333;
+    background-color: #2b2b2b;
+    color: #ffffff;
+}
+
+#additional-amount::placeholder {
+    color: #888888;
+}
+/* General Popup Styling */
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Dark overlay */
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+/* Inner Content of the Popup */
+.popup-inner-content {
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Order Details Title */
+.popup-inner-content h3 {
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+
+/* Order Items List */
+#order-items-list {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 15px;
+    text-align: left;
+    color: #cccccc;
+    font-size: 16px;
+}
+
+/* Total Price Styling */
+#order-total-amount {
+    color: #00ff00;
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+/* Extra Amount Section */
+.extra-amount-section {
+    margin-bottom: 20px;
+}
+
+.extra-amount-section label {
+    color: #bbbbbb;
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.extra-amount-section input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #333333;
+    background-color: #2a2a2a;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+/* Proceed to Payment Button */
+#confirm-payment-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #00cc00;
+    color: #000;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#confirm-payment-button:hover {
+    background-color: #00e600;
+}
+
+/* Close Popup on Outside Click */
+.popup {
+    cursor: pointer;
+}
+
+.popup-inner-content {
+    cursor: auto; /* Prevents closing when clicking inside the popup content */
+}
+
