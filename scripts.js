@@ -267,28 +267,26 @@ function showAddMoneyPopup() {
     addMoneyPopup.style.display = 'flex';
 }
 
-// Example function to proceed to payment
+// Function to proceed to payment options
 function proceedToPayment() {
-    const additionalAmount = parseFloat(document.getElementById('extra-amount').value) || 0;
+    const additionalAmount = parseFloat(additionalAmountInput.value) || 0;
     const finalTotal = totalPrice + additionalAmount;
-
-    // Hide any existing popups
-    closeAllPopups();
-
-    // Show the payment options popup with the updated total
-    showPaymentOptions(finalTotal);
+    addMoneyPopup.style.display = 'none';
+    showPaymentOptions(finalTotal); // Show payment options for the new total
 }
 
 // Function to show payment options
 function showPaymentOptions(finalTotal) {
-    // Clear any previous content in the payment popup
-    paymentPopup.innerHTML = ''; // Clear previous messages
-
-    // Detect installed payment apps and display options
-    detectPaymentApps(finalTotal);
-
-    // Show the payment popup
-    paymentPopup.style.display = 'flex';
+    paymentOptionsContainer.innerHTML = ''; // Clear any existing options
+    paymentApps.forEach(app => {
+        const button = document.createElement('button');
+        button.innerText = `Pay ₹${finalTotal} with ${app.name}`;
+        button.onclick = () => {
+            handlePayment(app, finalTotal);
+        };
+        paymentOptionsContainer.appendChild(button);
+    });
+    paymentPopup.style.display = 'flex';  // Show payment popup
 }
 
 // Function to handle payment
@@ -308,8 +306,9 @@ function handlePayment(app, finalTotal) {
             </div>
         `;
         paymentPopup.style.display = 'flex';
-    }, 3000);  // Wait 3 seconds before showing the processing message
+    }, 3000);  // Wait 3 seconds before showing the popup
 }
+
 // Function to close all popups
 function closeAllPopups() {
     selectionPopup.style.display = 'none';
@@ -318,19 +317,6 @@ function closeAllPopups() {
     thankYouPopup.style.display = 'none';
 }
 
-// Function to detect installed payment apps and display options
-function detectPaymentApps(finalTotal) {
-    paymentOptionsContainer.innerHTML = ''; // Clear any existing options
-
-    paymentApps.forEach(app => {
-        const button = document.createElement('button');
-        button.innerText = `Pay ₹${finalTotal} with ${app.name}`;
-        button.onclick = () => {
-            handlePayment(app, finalTotal);
-        };
-        paymentOptionsContainer.appendChild(button);
-    });
-}
 // Function to save transaction data locally in JSON
 function saveTransactionDataLocally(paymentMethod, finalTotal) {
     const transactionData = {
