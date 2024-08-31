@@ -267,23 +267,61 @@ function showAddMoneyPopup() {
     addMoneyPopup.style.display = 'flex';
 }
 
-// Function to proceed to payment options
+// Example function to proceed to payment
 function proceedToPayment() {
     const additionalAmount = parseFloat(document.getElementById('extra-amount').value) || 0;
     const finalTotal = totalPrice + additionalAmount;
-    addMoneyPopup.style.display = 'none';
-    showPaymentOptions(finalTotal); // Pass the new total to the payment options function
+
+    // Hide any existing popups
+    closeAllPopups();
+
+    // Show the payment options popup with the updated total
+    showPaymentOptions(finalTotal);
 }
 
 // Function to show payment options
 function showPaymentOptions(finalTotal) {
+    // Clear any previous content in the payment popup
+    paymentPopup.innerHTML = ''; // Clear previous messages
+
+    // Detect installed payment apps and display options
     detectPaymentApps(finalTotal);
-    paymentPopup.style.display = 'flex';  // Show payment popup
+
+    // Show the payment popup
+    paymentPopup.style.display = 'flex';
 }
 
-// Function to detect installed payment apps
+// Function to handle payment
+function handlePayment(app, finalTotal) {
+    const redirectToApp = `${app.scheme}pay?pa=${upiId}&pn=AKHAY BARIK&am=${finalTotal}&cu=INR&mode=02&purpose=00`;
+    console.log("Redirect URL: ", redirectToApp);
+
+    // Redirect to UPI payment app first
+    window.location.href = redirectToApp;
+
+    // Show a processing message after a short delay
+    setTimeout(() => {
+        paymentPopup.innerHTML = `
+            <div class="payment-popup-content">
+                <h3 class="payment-processing-message">Processing your payment...</h3>
+                <p class="payment-processing-description">Please complete your payment using ${app.name}.</p>
+            </div>
+        `;
+        paymentPopup.style.display = 'flex';
+    }, 3000);  // Wait 3 seconds before showing the processing message
+}
+// Function to close all popups
+function closeAllPopups() {
+    selectionPopup.style.display = 'none';
+    addMoneyPopup.style.display = 'none';
+    paymentPopup.style.display = 'none';
+    thankYouPopup.style.display = 'none';
+}
+
+// Function to detect installed payment apps and display options
 function detectPaymentApps(finalTotal) {
     paymentOptionsContainer.innerHTML = ''; // Clear any existing options
+
     paymentApps.forEach(app => {
         const button = document.createElement('button');
         button.innerText = `Pay ₹${finalTotal} with ${app.name}`;
@@ -293,48 +331,6 @@ function detectPaymentApps(finalTotal) {
         paymentOptionsContainer.appendChild(button);
     });
 }
-
-// Example of using this function after a payment is processed// Function to handle payment and save data
-// Function to handle payment and save data
-function handlePayment(app, finalTotal) {
-    const upiURL = generateUPIUrl(upiId, finalTotal);
-
-    // Attempt to redirect to the UPI payment app
-    const redirectToApp = `${app.scheme}pay?pa=${upiId}&pn=AKHAY BARIK&am=${finalTotal}&cu=INR&mode=02&purpose=00`;
-    console.log("Redirect URL: ", redirectToApp);
-
-    // Show a message or keep the popup open for 5 seconds
-    paymentPopup.innerHTML = `
-        <div class="payment-popup-content">
-            <h3 class="payment-processing-message">Processing your payment...</h3>
-            <p class="payment-processing-description">Please complete your payment using ${app.name}. The window will close in 5 seconds.</p>
-        </div>
-    `;
-    paymentPopup.style.display = 'flex';
-
-    setTimeout(() => {
-        closeAllPopups();  // Close all popups
-        // Redirect to UPI payment app
-        window.location.href = redirectToApp;
-
-        // Fallback if redirection fails
-        setTimeout(() => {
-            if (window.location.href === redirectToApp) {
-                alert("Redirection failed. Please check if the payment app is installed or try a different method.");
-            }
-        }, 5000);
-    }, 5000);  // Wait 5 seconds before redirection
-}
-
-
-// Function to close all popups
-function closeAllPopups() {
-    selectionPopup.style.display = 'none';
-    addMoneyPopup.style.display = 'none';
-    paymentPopup.style.display = 'none';
-    thankYouPopup.style.display = 'none';
-}
-
 // Function to save transaction data locally in JSON
 function saveTransactionDataLocally(paymentMethod, finalTotal) {
     const transactionData = {
@@ -352,43 +348,6 @@ function saveTransactionDataLocally(paymentMethod, finalTotal) {
 
     console.log('Transaction data saved locally:', transactionData);
 }
-function updateFinalTotal() {
-    const additionalAmount = parseFloat(document.getElementById('extra-amount').value) || 0;
-    const finalTotal = totalPrice + additionalAmount;
-    
-    // Update the final total in the UI
-    const finalTotalElement = document.getElementById('final-total-amount');
-   
-
-    // Update the "Pay" button with the new total
-    const confirmPaymentButton = document.getElementById('confirm-payment-button');
-    confirmPaymentButton.textContent = `Pay ₹${finalTotal}`;
-}
-
-// Ensure that the total is calculated and displayed when the user interacts with the amount input
-document.getElementById('extra-amount').addEventListener('input', updateFinalTotal);
-// Function to show Thank You popup
-function showThankYouPopup() {
-    paymentPopup.style.display = 'none';
-    thankYouPopup.innerHTML = `
-        <h3>Thank You for Your Purchase!</h3>
-        <p>Your transaction was successful.</p>
-        <p>Amount Paid: ₹${totalPrice}</p>
-        <p>Date: ${new Date().toLocaleDateString()}</p>
-        <p>Time: ${new Date().toLocaleTimeString()}</p>
-        <button onclick="closePopup()">Close</button>
-    `;
-    thankYouPopup.style.display = 'flex';
-}
-
-// Function to update payment buttons with the latest total
-function updatePaymentButtons() {
-    const buttons = paymentOptionsContainer.getElementsByTagName('button');
-    Array.from(buttons).forEach(button => {
-        const appName = button.innerText.split(' with ')[1];
-        button.innerText = `Pay ₹${totalPrice} with ${appName}`;
-    });
-}
 
 // Function to generate UPI URL
 function generateUPIUrl(upiId, amount) {
@@ -396,21 +355,12 @@ function generateUPIUrl(upiId, amount) {
 }
 
 // Function to update the order summary in the popup
-// Load the order summary and display the current total
 function updateOrderSummaryPopup() {
     const orderSummaryList = document.getElementById('order-items-list');
     const totalPricePopup = document.getElementById('order-total-amount');
-    
     orderSummaryList.innerHTML = orderList.innerHTML;
     totalPricePopup.textContent = `Total: ₹${totalPrice}`;
-
-    // Initial final total without any additional amount
-    const finalTotalElement = document.getElementById('final-total-amount');
-    
 }
-
-// Call this function when the "Add Amount" input is used
-updateOrderSummaryPopup();
 
 // Load the menu on page load
 document.addEventListener('DOMContentLoaded', () => {
