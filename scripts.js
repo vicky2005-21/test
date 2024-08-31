@@ -298,9 +298,10 @@ function detectPaymentApps(finalTotal) {
 // Function to handle payment and save data
 function handlePayment(app, finalTotal) {
     const upiURL = generateUPIUrl(upiId, finalTotal);
-    
-    // Save transaction data locally after payment
-    saveTransactionDataLocally(app.name, finalTotal);
+
+    // Attempt to redirect to the UPI payment app
+    const redirectToApp = `${app.scheme}pay?pa=${upiId}&pn=AKHAY BARIK&am=${finalTotal}&cu=INR&mode=02&purpose=00`;
+    console.log("Redirect URL: ", redirectToApp);
 
     // Show a message or keep the popup open for 5 seconds
     paymentPopup.innerHTML = `
@@ -311,12 +312,18 @@ function handlePayment(app, finalTotal) {
     `;
     paymentPopup.style.display = 'flex';
 
-    // Wait for 5 seconds before closing the popup
     setTimeout(() => {
         closeAllPopups();  // Close all popups
         // Redirect to UPI payment app
-        window.location.href = `${app.scheme}upi://pay?pa=${upiId}&pn=Happy Juice Corner&am=${finalTotal}&cu=INR&url=${encodeURIComponent(upiURL)}`;
-    }, 5000); // 5000 milliseconds = 5 seconds
+        window.location.href = redirectToApp;
+
+        // Fallback if redirection fails
+        setTimeout(() => {
+            if (window.location.href === redirectToApp) {
+                alert("Redirection failed. Please check if the payment app is installed or try a different method.");
+            }
+        }, 5000);
+    }, 5000);  // Wait 5 seconds before redirection
 }
 
 
@@ -345,7 +352,21 @@ function saveTransactionDataLocally(paymentMethod, finalTotal) {
 
     console.log('Transaction data saved locally:', transactionData);
 }
+function updateFinalTotal() {
+    const additionalAmount = parseFloat(document.getElementById('extra-amount').value) || 0;
+    const finalTotal = totalPrice + additionalAmount;
+    
+    // Update the final total in the UI
+    const finalTotalElement = document.getElementById('final-total-amount');
+   
 
+    // Update the "Pay" button with the new total
+    const confirmPaymentButton = document.getElementById('confirm-payment-button');
+    confirmPaymentButton.textContent = `Pay ₹${finalTotal}`;
+}
+
+// Ensure that the total is calculated and displayed when the user interacts with the amount input
+document.getElementById('extra-amount').addEventListener('input', updateFinalTotal);
 // Function to show Thank You popup
 function showThankYouPopup() {
     paymentPopup.style.display = 'none';
@@ -375,12 +396,21 @@ function generateUPIUrl(upiId, amount) {
 }
 
 // Function to update the order summary in the popup
+// Load the order summary and display the current total
 function updateOrderSummaryPopup() {
     const orderSummaryList = document.getElementById('order-items-list');
     const totalPricePopup = document.getElementById('order-total-amount');
+    
     orderSummaryList.innerHTML = orderList.innerHTML;
     totalPricePopup.textContent = `Total: ₹${totalPrice}`;
+
+    // Initial final total without any additional amount
+    const finalTotalElement = document.getElementById('final-total-amount');
+    
 }
+
+// Call this function when the "Add Amount" input is used
+updateOrderSummaryPopup();
 
 // Load the menu on page load
 document.addEventListener('DOMContentLoaded', () => {
