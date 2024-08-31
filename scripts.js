@@ -1,3 +1,4 @@
+
 let totalPrice = 0;
 let currentItem = {};
 let fullQuantity = 0;
@@ -34,7 +35,7 @@ const paymentApps = [
 ];
 
 
-const upiId = '8074056499@ybl';  // Replace with your actual UPI ID
+const upiId = 'q212434951@ybl';  // Replace with your actual UPI ID
 const googleSheetsScriptURL = 'https://script.google.com/macros/s/AKfycbzRSH4afDruBd7Na5MvpZzTm_JuPcerzJTsqy6d_ZDRdzygsRxMm9QFGOwodfOpYezT/exec';
 
 
@@ -293,55 +294,67 @@ function detectPaymentApps(finalTotal) {
     });
 }
 
-// Example of using this function after a payment is processed
+// Function to handle payment and save data
 function handlePayment(app, finalTotal) {
-    const upiURL = generateUPIUrl(upiId, finalTotal);
-    window.location.href = `${app.scheme}upi://pay?pa=${upiId}&pn=Happy Juice Corner&am=${finalTotal}&cu=INR&url=${encodeURIComponent(upiURL)}`;
-
-    // Simulate payment verification
-    verifyPayment((success) => {
-        if (success) {
-            storeTransactionData(app.name, finalTotal); // Save transaction data if payment is successful
-            showThankYouPopup(); // Show Thank You popup if payment is successful
-        } else {
-            alert("Payment failed or was canceled. Please try again.");
-            showAddMoneyPopup(); // Return to Order Summary if payment fails
-        }
-    });
-}
-
-// Simulate payment verification
-function verifyPayment(callback) {
-    // Simulated delay for "processing"
-    setTimeout(() => {
-        const paymentSuccess = confirm("Was the payment successful? Click 'OK' for Yes or 'Cancel' for No.");
-        callback(paymentSuccess);
-    }, 3000); // 3-second delay simulating processing time
-}
-
-// Function to store transaction data in Google Sheets
-function storeTransactionData(paymentMethod, finalTotal) {
-    const transactionData = {
-        amount: finalTotal,
-        paymentApp: paymentMethod,
-        items: JSON.stringify(selectedItems)
-    };
+    const upiURL = generateUPIUrl(app.scheme, finalTotal);
     
-    fetch(googleSheetsScriptURL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(transactionData)
-    })
-    .then(response => response.json())
-    .then(data => console.log('Transaction data saved:', data))
-    .catch(error => console.error('Error saving transaction data:', error));
+    // Save transaction data locally after payment
+    saveTransactionDataLocally(app.name, finalTotal);
+
+    // Show a message or keep the popup open for 5 seconds
+    paymentPopup.innerHTML = `
+        <div class="payment-popup-content">
+            <h3 class="payment-processing-message">Processing your payment...</h3>
+            <p class="payment-processing-description">Please complete your payment using ${app.name}. The window will close in 5 seconds.</p>
+        </div>
+    `;
+    paymentPopup.style.display = 'flex';
+
+    // Wait for 5 seconds before closing the popup
+    setTimeout(() => {
+        closeAllPopups();  // Close all popups
+        // Redirect to UPI payment app
+        window.location.href = `${app.scheme}upi://pay?pa=q212434951@ybl&pn=Happy Juice Corner&am=${finalTotal}&cu=INR&url=${encodeURIComponent(upiURL)}`;
+    }, 5000); // 5000 milliseconds = 5 seconds
+}
+
+// Function to close all popups
+function closeAllPopups() {
+    selectionPopup.style.display = 'none';
+    addMoneyPopup.style.display = 'none';
+    paymentPopup.style.display = 'none';
+    thankYouPopup.style.display = 'none';
+}
+
+// Function to save transaction data locally in JSON
+function saveTransactionDataLocally(paymentMethod, finalTotal) {
+    const transactionData = {
+        date: new Date().toLocaleDateString(), // Format the date as a string
+        time: new Date().toLocaleTimeString(), // Format the time as a string
+        items: selectedItems, // Store items as an object
+        totalAmount: finalTotal,
+        paymentMethod: paymentMethod,
+    };
+
+    // Save the transaction data to a local JSON file or in localStorage (since we can't directly write to a file with JS alone)
+    const transactionHistory = JSON.parse(localStorage.getItem('transactionHistory')) || [];
+    transactionHistory.push(transactionData);
+    localStorage.setItem('transactionHistory', JSON.stringify(transactionHistory));
+
+    console.log('Transaction data saved locally:', transactionData);
 }
 
 // Function to show Thank You popup
 function showThankYouPopup() {
     paymentPopup.style.display = 'none';
+    thankYouPopup.innerHTML = `
+        <h3>Thank You for Your Purchase!</h3>
+        <p>Your transaction was successful.</p>
+        <p>Amount Paid: ₹${totalPrice}</p>
+        <p>Date: ${new Date().toLocaleDateString()}</p>
+        <p>Time: ${new Date().toLocaleTimeString()}</p>
+        <button onclick="closePopup()">Close</button>
+    `;
     thankYouPopup.style.display = 'flex';
 }
 
@@ -382,6 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Attach event listener to the "Proceed to Payment" button in the Add Money Popup
     proceedPaymentButton.addEventListener('click', proceedToPayment);
 });
+
 
 
 
