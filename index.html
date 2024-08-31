@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy Juice Corner</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -27,7 +26,7 @@
                     <p class="details hours">⏰ 09:00 AM to 7:30 PM</p>
                 </div>
                 <div class="details">
-                    <p><span class="icon">📍</span> SD</p>
+                    <p><span class="icon">📍</span> <a href="https://maps.app.goo.gl/TZRGwWjVRUUu5EFY7" target="_blank" class="location-link">SD</a></p>
                     <p><span class="icon">📞</span> <a href="tel:8658011445" class="phone-link">8658011445</a></p>
                     <p><span class="icon">📞</span> <a href="tel:7008047535" class="phone-link">7008047535</a></p>
                 </div>
@@ -108,6 +107,7 @@
         </div>
     </div>
 
+    <!-- Add Money Popup -->
     <div id="add-money-popup" class="popup" onclick="closePopupOutside(event)">
         <div class="popup-inner-content">
             <h3>Order Summary</h3>
@@ -119,7 +119,7 @@
             <!-- Section to Add Additional Amount -->
             <div class="extra-amount-section">
                 <label for="extra-amount">Add Amount (Optional):</label>
-                <input type="number" id="extra-amount" placeholder="Enter additional amount" oninput="updateFinalTotal()">
+                <input type="number" id="extra-amount" placeholder="Add an additional amount for snack items, if any:" oninput="updateFinalTotal()">
             </div>
     
             <!-- New Total After Adding Extra Amount -->
@@ -130,18 +130,6 @@
         </div>
     </div>
 
-    <div id="thank-you-popup" class="popup">
-        <div class="popup-inner-content">
-            <img src="logo.png" alt="Logo" class="thank-you-logo">
-            <h3>Thank You!</h3>
-            <p>Your payment was successful.</p>
-            <ul id="order-summary-list" class="order-summary-list"></ul>
-            <p class="thank-you-footer">We appreciate your business!</p>
-            <button onclick="closePopup()">Close</button>
-        </div>
-    </div>
-    
-    <!-- Payment Options Popup -->
     <!-- Payment Options Popup -->
     <div id="payment-options-popup" class="popup" onclick="closePopupOutside(event)">
         <div class="popup-inner-content">
@@ -150,7 +138,6 @@
             <button onclick="closePaymentPopup()">Cancel</button>
         </div>
     </div>
-
 
     <!-- Attribution Footer -->
     <footer class="attribution">
