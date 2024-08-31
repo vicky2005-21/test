@@ -288,6 +288,20 @@ function showPaymentOptions(finalTotal) {
     });
     paymentPopup.style.display = 'flex';  // Show payment popup
 }
+function updateFinalTotal() {
+    const additionalAmount = parseFloat(document.getElementById('extra-amount').value) || 0;
+    const finalTotal = totalPrice + additionalAmount;
+    
+    // Update the final total in the UI
+    const finalTotalElement = document.getElementById('final-total-amount');
+
+    // Update the "Pay" button with the new total
+    const confirmPaymentButton = document.getElementById('confirm-payment-button');
+    confirmPaymentButton.textContent = `Pay ₹${finalTotal}`;
+}
+
+
+
 
 // Function to handle payment
 function handlePayment(app, finalTotal) {
@@ -307,6 +321,17 @@ function handlePayment(app, finalTotal) {
         `;
         paymentPopup.style.display = 'flex';
     }, 3000);  // Wait 3 seconds before showing the popup
+}
+// Load the order summary and display the current total
+function updateOrderSummaryPopup() {
+    const orderSummaryList = document.getElementById('order-items-list');
+    const totalPricePopup = document.getElementById('order-total-amount');
+    
+    orderSummaryList.innerHTML = orderList.innerHTML;
+    totalPricePopup.textContent = `Total: ₹${totalPrice}`;
+
+    // Initial final total without any additional amount
+    const finalTotalElement = document.getElementById('final-total-amount');
 }
 
 // Function to close all popups
