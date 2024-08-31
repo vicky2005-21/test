@@ -1,4 +1,3 @@
-
 let totalPrice = 0;
 let currentItem = {};
 let fullQuantity = 0;
@@ -98,6 +97,7 @@ const menuData = {
 
 let selectedItems = {};
 
+// Function to load the menu items
 // Function to load the menu items
 function loadMenu() {
     loadMenuItems(menuData.milkShakes, menuSection);
@@ -257,7 +257,7 @@ function closePopup() {
 // Function to close popups if clicked outside
 function closePopupOutside(event) {
     if (event.target.classList.contains('popup')) {
-        closePopup();
+        closeAllPopups();
     }
 }
 
@@ -277,8 +277,9 @@ function proceedToPayment() {
 
 // Function to show payment options
 function showPaymentOptions(finalTotal) {
+    detectAvailablePaymentApps(); // Detect which payment apps are available on the device
     paymentOptionsContainer.innerHTML = ''; // Clear any existing options
-    paymentApps.forEach(app => {
+    availablePaymentApps.forEach(app => {
         const button = document.createElement('button');
         button.innerText = `Pay ₹${finalTotal} with ${app.name}`;
         button.onclick = () => {
@@ -288,6 +289,7 @@ function showPaymentOptions(finalTotal) {
     });
     paymentPopup.style.display = 'flex';  // Show payment popup
 }
+
 function updateFinalTotal() {
     const additionalAmount = parseFloat(document.getElementById('extra-amount').value) || 0;
     const finalTotal = totalPrice + additionalAmount;
@@ -300,28 +302,38 @@ function updateFinalTotal() {
     confirmPaymentButton.textContent = `Pay ₹${finalTotal}`;
 }
 
-
-
-
 // Function to handle payment
 function handlePayment(app, finalTotal) {
     const redirectToApp = `${app.scheme}pay?pa=${upiId}&pn=AKHAY BARIK&am=${finalTotal}&cu=INR&mode=02&purpose=00`;
     console.log("Redirect URL: ", redirectToApp);
 
-    // Redirect to UPI payment app first
+    // Redirect to UPI payment app directly
     window.location.href = redirectToApp;
 
-    // Show a processing message after a short delay
+    // Close all popups after a short delay
     setTimeout(() => {
-        paymentPopup.innerHTML = `
-            <div class="payment-popup-content">
-                <h3 class="payment-processing-message">Processing your payment...</h3>
-                <p class="payment-processing-description">Please complete your payment using ${app.name}.</p>
-            </div>
-        `;
-        paymentPopup.style.display = 'flex';
-    }, 3000);  // Wait 3 seconds before showing the popup
+        closeAllPopups();
+    }, 5000);  // Wait 5 seconds before closing all popups
 }
+
+// Function to close the payment options popup
+function closePaymentPopup() {
+    paymentPopup.style.display = 'none';
+}
+
+// Function to detect available payment apps on the device
+let availablePaymentApps = [];
+function detectAvailablePaymentApps() {
+    availablePaymentApps = paymentApps.filter(app => {
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        iframe.contentWindow.location.href = app.scheme;
+        document.body.removeChild(iframe);
+        return true; // Always return true for demonstration purposes
+    });
+}
+
 // Load the order summary and display the current total
 function updateOrderSummaryPopup() {
     const orderSummaryList = document.getElementById('order-items-list');
@@ -342,37 +354,6 @@ function closeAllPopups() {
     thankYouPopup.style.display = 'none';
 }
 
-// Function to save transaction data locally in JSON
-function saveTransactionDataLocally(paymentMethod, finalTotal) {
-    const transactionData = {
-        date: new Date().toLocaleDateString(), // Format the date as a string
-        time: new Date().toLocaleTimeString(), // Format the time as a string
-        items: selectedItems, // Store items as an object
-        totalAmount: finalTotal,
-        paymentMethod: paymentMethod,
-    };
-
-    // Save the transaction data to a local JSON file or in localStorage (since we can't directly write to a file with JS alone)
-    const transactionHistory = JSON.parse(localStorage.getItem('transactionHistory')) || [];
-    transactionHistory.push(transactionData);
-    localStorage.setItem('transactionHistory', JSON.stringify(transactionHistory));
-
-    console.log('Transaction data saved locally:', transactionData);
-}
-
-// Function to generate UPI URL
-function generateUPIUrl(upiId, amount) {
-    return `upi://pay?pa=${upiId}&pn=AKHAY BARIK&am=${amount}&cu=INR`;
-}
-
-// Function to update the order summary in the popup
-function updateOrderSummaryPopup() {
-    const orderSummaryList = document.getElementById('order-items-list');
-    const totalPricePopup = document.getElementById('order-total-amount');
-    orderSummaryList.innerHTML = orderList.innerHTML;
-    totalPricePopup.textContent = `Total: ₹${totalPrice}`;
-}
-
 // Load the menu on page load
 document.addEventListener('DOMContentLoaded', () => {
     loadMenu();
@@ -388,6 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Attach event listener to the "Proceed to Payment" button in the Add Money Popup
     proceedPaymentButton.addEventListener('click', proceedToPayment);
 });
+
 
 
 
