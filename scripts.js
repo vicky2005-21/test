@@ -371,7 +371,7 @@ function updatePaymentButtons() {
 
 // Function to generate UPI URL
 function generateUPIUrl(upiId, amount) {
-    return `upi://pay?pa=${upiId}&pn=Happy Juice Corner&am=${amount}&cu=INR`;
+    return `upi://pay?pa=${upiId}&pn=AKHAY BARIK&am=${amount}&cu=INR`;
 }
 
 // Function to update the order summary in the popup
