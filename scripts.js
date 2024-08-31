@@ -294,9 +294,10 @@ function detectPaymentApps(finalTotal) {
     });
 }
 
+// Example of using this function after a payment is processed// Function to handle payment and save data
 // Function to handle payment and save data
 function handlePayment(app, finalTotal) {
-    const upiURL = generateUPIUrl(app.scheme, finalTotal);
+    const upiURL = generateUPIUrl(upiId, finalTotal);
     
     // Save transaction data locally after payment
     saveTransactionDataLocally(app.name, finalTotal);
@@ -314,9 +315,10 @@ function handlePayment(app, finalTotal) {
     setTimeout(() => {
         closeAllPopups();  // Close all popups
         // Redirect to UPI payment app
-        window.location.href = `${app.scheme}upi://pay?pa=q212434951@ybl&pn=Happy Juice Corner&am=${finalTotal}&cu=INR&url=${encodeURIComponent(upiURL)}`;
+        window.location.href = `${app.scheme}upi://pay?pa=${upiId}&pn=Happy Juice Corner&am=${finalTotal}&cu=INR&url=${encodeURIComponent(upiURL)}`;
     }, 5000); // 5000 milliseconds = 5 seconds
 }
+
 
 // Function to close all popups
 function closeAllPopups() {
@@ -395,7 +397,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Attach event listener to the "Proceed to Payment" button in the Add Money Popup
     proceedPaymentButton.addEventListener('click', proceedToPayment);
 });
-
 
 
 
