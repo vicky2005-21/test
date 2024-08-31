@@ -592,3 +592,17 @@ button:active {
     color: #007bff; /* Change color on hover */
     text-decoration: none; /* Remove underline on hover */
 }
+#footer {
+    background-color: #f8f9fa; /* or any background color */
+    padding: 20px;
+    text-align: center;
+    position: fixed; /* Ensure it's fixed at the bottom */
+    bottom: 0;
+    width: 100%; /* Make it span across the entire width */
+    z-index: 1000; /* Ensure it's on top of other content */
+}
+
+#footer-total {
+    font-size: 16px;
+    color: #333;
+}
